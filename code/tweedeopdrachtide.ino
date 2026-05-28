@@ -1,32 +1,26 @@
-const int ledPin = 11;
-const int buttonPin = 2;
-
-int teller = 0;
-int vorigeKnopStatus = LOW;
+int pinArray[] = {12, 11, 10, 9, 8, 7, 6, 5};
+int aantalLeds = 8;
 
 void setup() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT);
+  // Alle LED pinnen instellen als output
+  for (int i = 0; i < aantalLeds; i++) {
+    pinMode(pinArray[i], OUTPUT);
+  }
 }
 
 void loop() {
-  int knopStatus = digitalRead(buttonPin);
-
-  // Dit gebeurt alleen op het moment dat de knop net wordt ingedrukt
-  if (knopStatus == HIGH && vorigeKnopStatus == LOW) {
-    teller++;
-    delay(50); // tegen contactdender
+  // De LED's gaan één voor één naar rechts
+  for (int i = 0; i < aantalLeds; i++) {
+    digitalWrite(pinArray[i], HIGH);
+    delay(150);
+    digitalWrite(pinArray[i], LOW);
   }
 
-  // Als teller even is, LED uit
-  if (teller % 2 == 0) {
-    digitalWrite(ledPin, LOW);
-  } 
-  // Als teller oneven is, LED aan
-  else {
-    digitalWrite(ledPin, HIGH);
+  // De LED's gaan daarna weer terug naar links
+  // Ik begin bij aantalLeds - 2, zodat de laatste LED niet dubbel knippert
+  for (int i = aantalLeds - 2; i > 0; i--) {
+    digitalWrite(pinArray[i], HIGH);
+    delay(150);
+    digitalWrite(pinArray[i], LOW);
   }
-
-  // onthoud de knopstatus voor de volgende loop
-  vorigeKnopStatus = knopStatus;
 }

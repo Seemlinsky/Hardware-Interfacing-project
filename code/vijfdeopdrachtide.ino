@@ -3,53 +3,62 @@
 Servo mijnServo;
 
 const int servoPin = 9;
-const int xPin = A0;      // VRx van joystick
-const int knopPin = 2;    // SW van joystick
-
-int joystickWaarde = 0;
-int servoHoek = 0;
-int knopStatus = HIGH;
+const int knop1Pin = 2;
+const int knop2Pin = 3;
 
 void setup() {
+  // Servo koppelen aan pin 9
   mijnServo.attach(servoPin);
 
-  // Joystick-knop gebruikt meestal interne pull-up
-  pinMode(knopPin, INPUT_PULLUP);
+  // Knoppen instellen als input
+  pinMode(knop1Pin, INPUT);
+  pinMode(knop2Pin, INPUT);
 
+  // Servo begint op 0 graden
   mijnServo.write(0);
 }
 
 void loop() {
-  knopStatus = digitalRead(knopPin);
+  // Knoppen uitlezen
+  int knop1Status = digitalRead(knop1Pin);
+  int knop2Status = digitalRead(knop2Pin);
 
-  // Als joystick wordt ingedrukt
-  if (knopStatus == LOW) {
+  // Beide knoppen tegelijk ingedrukt
+  if (knop1Status == HIGH && knop2Status == HIGH) {
+    beweegServo(0, 120, 1000);
+    delay(2000); // even blijven staan
+    beweegServo(120, 0, 1000);
+  }
+
+  // Alleen knop 1 ingedrukt: langzamer bewegen
+  else if (knop1Status == HIGH) {
     beweegServo(0, 120, 1000);
     beweegServo(120, 0, 1000);
-  } 
-  else {
-    // Links/rechts beweging van joystick uitlezen
-    joystickWaarde = analogRead(xPin);
+  }
 
-    // Waarde 0-1023 omzetten naar 0-180 graden
-    servoHoek = map(joystickWaarde, 0, 1023, 0, 180);
-
-    mijnServo.write(servoHoek);
-
-    delay(15);
+  // Alleen knop 2 ingedrukt: sneller bewegen
+  else if (knop2Status == HIGH) {
+    beweegServo(0, 120, 500);
+    beweegServo(120, 0, 500);
   }
 }
 
 void beweegServo(int startHoek, int eindHoek, int totaleTijd) {
   int stappen = abs(eindHoek - startHoek);
+
+  // Tijd per stap berekenen, zodat de beweging ongeveer klopt
   int wachttijd = totaleTijd / stappen;
 
+  // Servo beweegt omhoog
   if (startHoek < eindHoek) {
     for (int hoek = startHoek; hoek <= eindHoek; hoek++) {
       mijnServo.write(hoek);
       delay(wachttijd);
     }
-  } else {
+  }
+
+  // Servo beweegt terug omlaag
+  else {
     for (int hoek = startHoek; hoek >= eindHoek; hoek--) {
       mijnServo.write(hoek);
       delay(wachttijd);

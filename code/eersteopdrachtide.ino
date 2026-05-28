@@ -1,24 +1,23 @@
-int pinArray[] = {12, 11, 10, 9, 8, 7, 6, 5};
-int aantalLeds = 8;
-
 void setup() {
-  for (int count = 0; count < aantalLeds; count++) {
-    pinMode(pinArray[count], OUTPUT);
-  }
+  // LED 1 zit op pin 12
+  pinMode(12, OUTPUT);
+
+  // LED 2 zit op pin 11
+  pinMode(11, OUTPUT);
 }
 
 void loop() {
-  // LED's heen laten lopen
-  for (int count = 0; count < aantalLeds; count++) {
-    digitalWrite(pinArray[count], HIGH);
-    delay(150);
-    digitalWrite(pinArray[count], LOW);
-  }
+  // Eerst zet ik LED 1 aan en LED 2 uit
+  digitalWrite(12, HIGH);
+  digitalWrite(11, LOW);
 
-  // LED's terug laten lopen
-  for (int count = aantalLeds - 2; count > 0; count--) {
-    digitalWrite(pinArray[count], HIGH);
-    delay(150);
-    digitalWrite(pinArray[count], LOW);
-  }
+  // 1 seconde wachten
+  delay(1000);
+
+  // Daarna zet ik LED 1 uit en LED 2 aan
+  digitalWrite(12, LOW);
+  digitalWrite(11, HIGH);
+
+  // Weer 1 seconde wachten
+  delay(1000);
 }

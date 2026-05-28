@@ -11,29 +11,34 @@ int servoHoek = 0;
 int knopStatus = HIGH;
 
 void setup() {
+  // Servo koppelen aan pin 9
   mijnServo.attach(servoPin);
 
-  // Joystick-knop gebruikt meestal interne pull-up
+  // Ik gebruik de interne pull-up voor de joystickknop
   pinMode(knopPin, INPUT_PULLUP);
 
+  // Servo begint op 0 graden
   mijnServo.write(0);
 }
 
 void loop() {
+  // Joystickknop uitlezen
   knopStatus = digitalRead(knopPin);
 
-  // Als joystick wordt ingedrukt
+  // Als ik de joystick indruk, doet de servo een vaste beweging
   if (knopStatus == LOW) {
     beweegServo(0, 120, 1000);
     beweegServo(120, 0, 1000);
-  } 
+  }
+
   else {
-    // Links/rechts beweging van joystick uitlezen
+    // Links/rechts beweging van de joystick uitlezen
     joystickWaarde = analogRead(xPin);
 
-    // Waarde 0-1023 omzetten naar 0-180 graden
+    // Joystickwaarde omzetten naar een servohoek
     servoHoek = map(joystickWaarde, 0, 1023, 0, 180);
 
+    // Servo naar de berekende hoek sturen
     mijnServo.write(servoHoek);
 
     delay(15);
@@ -42,14 +47,20 @@ void loop() {
 
 void beweegServo(int startHoek, int eindHoek, int totaleTijd) {
   int stappen = abs(eindHoek - startHoek);
+
+  // Tijd per stap berekenen, zodat de beweging ongeveer klopt
   int wachttijd = totaleTijd / stappen;
 
+  // Servo beweegt omhoog
   if (startHoek < eindHoek) {
     for (int hoek = startHoek; hoek <= eindHoek; hoek++) {
       mijnServo.write(hoek);
       delay(wachttijd);
     }
-  } else {
+  }
+
+  // Servo beweegt terug omlaag
+  else {
     for (int hoek = startHoek; hoek >= eindHoek; hoek--) {
       mijnServo.write(hoek);
       delay(wachttijd);

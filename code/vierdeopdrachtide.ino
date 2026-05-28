@@ -1,57 +1,47 @@
-#include <Servo.h>
+const int potPin = A0;
 
-Servo mijnServo;
+int ledPins[] = {12, 11, 10, 9, 8, 7, 6};
+int aantalLeds = 7;
 
-const int servoPin = 9;
-const int knop1Pin = 2;
-const int knop2Pin = 3;
+int potWaarde = 0;
+int aantalAan = 0;
 
 void setup() {
-  mijnServo.attach(servoPin);
+  // Serial Monitor starten om waardes te kunnen controleren
+  Serial.begin(9600);
 
-  pinMode(knop1Pin, INPUT);
-  pinMode(knop2Pin, INPUT);
-
-  mijnServo.write(0);
+  // Alle LED pinnen instellen als output
+  for (int i = 0; i < aantalLeds; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
 }
 
 void loop() {
-  int knop1Status = digitalRead(knop1Pin);
-  int knop2Status = digitalRead(knop2Pin);
+  // Potmeter uitlezen
+  potWaarde = analogRead(potPin);
 
-  // Beide knoppen tegelijk ingedrukt
-  if (knop1Status == HIGH && knop2Status == HIGH) {
-    beweegServo(0, 120, 1000);
-    delay(2000);
-    beweegServo(120, 0, 1000);
+  // Potmeterwaarde omzetten naar hoeveel LED's aan moeten
+  aantalAan = map(potWaarde, 0, 1023, 0, aantalLeds + 1);
+
+  // Voor de zekerheid niet meer dan 7 LED's aanzetten
+  if (aantalAan > aantalLeds) {
+    aantalAan = aantalLeds;
   }
 
-  // Alleen knop 1 ingedrukt
-  else if (knop1Status == HIGH) {
-    beweegServo(0, 120, 1000);
-    beweegServo(120, 0, 1000);
-  }
-
-  // Alleen knop 2 ingedrukt
-  else if (knop2Status == HIGH) {
-    beweegServo(0, 120, 500);
-    beweegServo(120, 0, 500);
-  }
-}
-
-void beweegServo(int startHoek, int eindHoek, int totaleTijd) {
-  int stappen = abs(eindHoek - startHoek);
-  int wachttijd = totaleTijd / stappen;
-
-  if (startHoek < eindHoek) {
-    for (int hoek = startHoek; hoek <= eindHoek; hoek++) {
-      mijnServo.write(hoek);
-      delay(wachttijd);
-    }
-  } else {
-    for (int hoek = startHoek; hoek >= eindHoek; hoek--) {
-      mijnServo.write(hoek);
-      delay(wachttijd);
+  // LED's aan of uit zetten op basis van de potmeter
+  for (int i = 0; i < aantalLeds; i++) {
+    if (i < aantalAan) {
+      digitalWrite(ledPins[i], HIGH);
+    } else {
+      digitalWrite(ledPins[i], LOW);
     }
   }
+
+  // Waardes tonen in de Serial Monitor
+  Serial.print("Potmeter waarde: ");
+  Serial.print(potWaarde);
+  Serial.print(" | LEDs aan: ");
+  Serial.println(aantalAan);
+
+  delay(100);
 }

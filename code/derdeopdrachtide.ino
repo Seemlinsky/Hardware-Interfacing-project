@@ -1,41 +1,37 @@
-const int potPin = A0;
+const int ledPin = 11;
+const int buttonPin = 2;
 
-int ledPins[] = {12, 11, 10, 9, 8, 7, 6};
-int aantalLeds = 7;
-
-int potWaarde = 0;
-int aantalAan = 0;
+int teller = 0;
+int vorigeKnopStatus = LOW;
 
 void setup() {
-  Serial.begin(9600);
+  // LED instellen als output
+  pinMode(ledPin, OUTPUT);
 
-  for (int i = 0; i < aantalLeds; i++) {
-    pinMode(ledPins[i], OUTPUT);
-  }
+  // Drukknop instellen als input
+  pinMode(buttonPin, INPUT);
 }
 
 void loop() {
-  potWaarde = analogRead(potPin);
+  // Knop uitlezen
+  int knopStatus = digitalRead(buttonPin);
 
-  // Zet de potmeterwaarde 0-1023 om naar 0-7 LED's
-  aantalAan = map(potWaarde, 0, 1023, 0, aantalLeds + 1);
-
-  if (aantalAan > aantalLeds) {
-    aantalAan = aantalLeds;
+  // Alleen tellen als de knop net is ingedrukt
+  if (knopStatus == HIGH && vorigeKnopStatus == LOW) {
+    teller++;
+    delay(50); // kleine pauze tegen contactdender
   }
 
-  for (int i = 0; i < aantalLeds; i++) {
-    if (i < aantalAan) {
-      digitalWrite(ledPins[i], HIGH);
-    } else {
-      digitalWrite(ledPins[i], LOW);
-    }
+  // Bij een even teller staat de LED uit
+  if (teller % 2 == 0) {
+    digitalWrite(ledPin, LOW);
   }
 
-  Serial.print("Potmeter waarde: ");
-  Serial.print(potWaarde);
-  Serial.print(" | LEDs aan: ");
-  Serial.println(aantalAan);
+  // Bij een oneven teller staat de LED aan
+  else {
+    digitalWrite(ledPin, HIGH);
+  }
 
-  delay(100);
+  // De huidige knopstatus onthouden voor de volgende ronde
+  vorigeKnopStatus = knopStatus;
 }
