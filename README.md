@@ -1,8 +1,8 @@
 # Hardware Interfacing Project - Arduino opdrachten
 
-Naam: Stefan Stojkovic
-Module: Hardware Interfacing
-Schooljaar: 2025-2026
+**Naam:** Stefan Stojkovic  
+**Module:** Hardware Interfacing  
+**Schooljaar:** 2025-2026
 
 Dit is mijn GitHub-repository voor mijn Arduino portfolio.
 In dit project heb ik 6 Arduino-opdrachten gemaakt. In deze repo staan mijn codebestanden, screenshots van Tinkercad en mijn documentatie.
